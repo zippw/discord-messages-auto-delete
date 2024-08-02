@@ -8,6 +8,7 @@ module.exports = {
     },
     FILTERS: { // deletes messages that matches your RegExp FILTERS
         everything: { exp: ".*", flags: 'ig' },
+        empty_content: { exp: "^$", flags: 'igm' }
         // links: { exp: "(https?:\/\/[^\s]+)", "ig"},
         // other custom filters ...
     },

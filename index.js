@@ -22,7 +22,9 @@ const sendRequest = async (channelId, messageId) => {
         }
         return response.status;
     } catch (error) {
-        logs.append(error.message);
+        logs.append(`${error.message} retrying in 1000 ms`, false);
+        await delay(1000);
+        return sendRequest(channelId, messageId);
         return error.message;
     }
 };
@@ -96,13 +98,13 @@ const getToDelete = async () => {
         const messages = JSONBigInt.parse(await fs.readFileSync(`c${channelId}/messages.json`, 'utf-8'));
         const guildId = JSON.parse(await fs.readFileSync(`c${channelId}/channel.json`, 'utf-8')).guild?.id;
         messages.forEach(msg => {
-            if (!msg.Contents) return;
+            if (msg.Contents === null && msg.Contents === undefined && msg.Contents === NaN) return;
             let matches = {};
 
             if (BANWORDS.length) matches.banwords = (msg.Contents.match(new RegExp(`\\b(${BANWORDS.join("|")})\\b`, "ig")) || []).filter(x => x);
             for (const [filterName, filter] of Object.entries(FILTERS)) {
                 if (!IGNORE.some(x => msg.Contents.includes(x)))
-                    matches[filterName] = (msg.Contents.match(new RegExp(filter.exp, filter.flags)) || []).filter(x => x);
+                    matches[filterName] = (msg.Contents.match(new RegExp(filter.exp, filter.flags)) || []).filter(x => x !== null && x !== undefined && x !== NaN);
             }
 
             if (Object.values(matches).every(arr => arr.length === 0)) return;
