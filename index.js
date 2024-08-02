@@ -109,18 +109,24 @@ const getToDelete = async () => {
             bad_messages.push({
                 messageId: msg.ID.toString(), channelId, matches,
                 txt: msg.Contents,
+                ts: msg.Timestamp,
                 link: `https://discord.com/channels/${guildId || "@me"}/${channelId}/${msg.ID}`
             });
         });
     }
 
+    if (options.delete_new_ones_first) bad_messages = bad_messages
+        .sort((a, b) => new Date(b.ts) - new Date(a.ts));
+
     console.log(`Messages found: ${bad_messages.length}`);
     console.timeEnd('Time');
+
     return bad_messages;
 };
 
 (async () => {
     let toDelete = await getToDelete();
+    fs.writeFileSync('toDelete.json', JSON.stringify(toDelete, null, 4));
     const unavailable_channels = await getUnavailableChannels();
     await backupFiles();
     toDelete = toDelete.filter(x => !unavailable_channels.includes(x.channelId));

@@ -2,7 +2,8 @@ module.exports = {
     authorization: "YOUR_DISCORD_ACCOUNT_TOKEN_GOES_HERE",
     options: {
         skip_unavailable_messages: true, // ignores channels where you don't have access to delete messages
-        download_attachments: false
+        download_attachments: false,
+        delete_new_ones_first: true
     },
     FILTERS: { // deletes messages that matches your RegExp FILTERS
         everything: { exp: ".*", flags: 'ig' },
