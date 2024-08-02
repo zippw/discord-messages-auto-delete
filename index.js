@@ -27,9 +27,9 @@ const sendRequest = async (channelId, messageId) => {
     }
 };
 
-const deleteMsg = async (channelId, messageId, deleted) => {
+const deleteMsg = async (channelId, messageId, txt, deleted) => {
     const result = await sendRequest(channelId, messageId);
-    logs.append(`${result} ${channelId}/${messageId}`);
+    logs.append(`${result} ${channelId}/${messageId}${options.display_msg_content ? `: ${txt}` : ""}`);
     if (!deleted[`${channelId}/${messageId}`] && [204, 403, 400, 404].includes(result)) {
         deleted[`${channelId}/${messageId}`] = result;
         fs.writeFileSync('deleted.json', JSON.stringify(deleted, null, 4));
@@ -133,10 +133,10 @@ const getToDelete = async () => {
     let deleted = require('./deleted.json');
 
     for (let i = 0; i < toDelete.length; i++) {
-        const { messageId, channelId } = toDelete[i];
+        const { messageId, channelId, txt } = toDelete[i];
         if (!deleted[`${channelId}/${messageId}`]) {
             logs.group(`message ${i + 1} / ${toDelete.length}`);
-            await deleteMsg(channelId, messageId, deleted);
+            await deleteMsg(channelId, messageId, txt, deleted);
         }
     }
 })();

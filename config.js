@@ -3,7 +3,8 @@ module.exports = {
     options: {
         skip_unavailable_messages: true, // ignores channels where you don't have access to delete messages
         download_attachments: false,
-        delete_new_ones_first: true
+        delete_new_ones_first: true,
+        display_msg_content: false
     },
     FILTERS: { // deletes messages that matches your RegExp FILTERS
         everything: { exp: ".*", flags: 'ig' },
